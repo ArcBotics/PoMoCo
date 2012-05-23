@@ -12,7 +12,7 @@ import time
 
 from visual import *
 
-from servotorComm import Controller
+from servitorComm import Controller
 controller = Controller()
 con = True
 print "seial controller established"
@@ -180,7 +180,7 @@ class leg(threading.Thread):
             self.knee_set = degrees
             self.kneeLock.release()
         # tell controler to move the corresponding servo
-        controller.servos[self.servos['knee']].setPos(degrees=-degrees)
+        controller.servos[self.servos['knee']].setPos(deg=-degrees)
 
     def ankleSet(self, degrees=None, uS=None):
         # change the position angle of the ankle
@@ -191,7 +191,7 @@ class leg(threading.Thread):
             self.ankle_set = degrees
             self.ankleLock.release()
         # tell controler to move the corresponding servo
-        controller.servos[self.servos['ankle']].setPos(degrees=degrees-90)
+        controller.servos[self.servos['ankle']].setPos(deg=degrees-90)
 
     ############################################################################
     #Imported from AutoIK
@@ -207,7 +207,7 @@ class leg(threading.Thread):
         runMovement(self.replantFoot_function,endHipAngle,stepTime)
 
     def setHipDeg_function(self,endHipAngle,stepTime=1):
-        con.servos[self.hipServoNum].setPos(degrees=endHipAngle)
+        con.servos[self.hipServoNum].setPos(de=endHipAngle)
 
     def setFootY_function(self,footY,stepTime):
         #print self.hipServoNum,""
