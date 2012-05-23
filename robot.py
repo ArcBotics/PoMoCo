@@ -1,7 +1,7 @@
 import time
 import math
 
-from servitorComm import runMovement
+from servotorComm import runMovement
 
 #modifies how smoothly the servos move
 #smoother means more processing power, and fills the serial line

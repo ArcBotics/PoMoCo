@@ -4,6 +4,20 @@ import serial
 import threading
 
 debug = False
+startTime = time.clock()
+serialSends = []
+
+
+class runMovement(threading.Thread):
+
+    def __init__(self,function,*args):
+        threading.Thread.__init__(self)
+        self.function=function
+        self.args = args
+        self.start()
+
+    def run(self):
+        self.function(*self.args)
 
 class serHandler(threading.Thread):
 
@@ -28,7 +42,6 @@ class serHandler(threading.Thread):
         if self.serOpen:
             if self.ser.writable:
                 if self.serOpen:
-
                     while(True):
                     # send waiting messages
                         send = False
@@ -37,7 +50,10 @@ class serHandler(threading.Thread):
                             toSend = self.sendQueue.pop(0)
                             self.sendLock.release()
                             send = True
-                        if send: self.ser.write(str(toSend))
+                        if send:
+                            self.ser.write(str(toSend))
+                            sendTime = time.clock()-startTime
+                            serialSends.append([float(sendTime),str(toSend)])
                         if debug:
                             print "sent '%s' to COM%d"%(str(toSend).strip('\r'),self.serNum+1)
 
@@ -70,6 +86,7 @@ class serHandler(threading.Thread):
                 ser.write("VER\r")
                 time.sleep(0.1)
                 readReply = ser.read(5)
+
                 if readReply == 'SSC32':
                     print "controller found at port:",i+1
                     ser.flush()
@@ -88,7 +105,7 @@ class serHandler(threading.Thread):
 
 class Servo:
 
-    def __init__(self,servoNum,serHandler,servoPos=1500,offset=0,active=True):
+    def __init__(self,servoNum,serHandler,servoPos=1500,offset=0,active=False):
         self.serHandler = serHandler
         self.active = active
         self.servoNum = servoNum
@@ -97,13 +114,11 @@ class Servo:
         self.servoPos = servoPos
         self.offset = offset
 
-
-    def setPos(self,timing="None",degrees="None",move=True):
-
-        if timing != "None":
+    def setPos(self,timing=None,deg=None,move=True):
+        if timing != None:
             self.servoPos = timing
-        if degrees != "None":
-            self.servoPos = int(1500.0+float(degrees)*11.1111111)
+        if deg != None:
+            self.servoPos = int(1500.0+float(deg)*11.1111111)
         if move:
             self.active = True
             self.move()
@@ -116,38 +131,47 @@ class Servo:
     def getPosuS(self):
         return self.servoPos
 
+    def getActive(self):
+        return self.active
+
     def getOffsetDeg(self):
         return (self.offset-1500)/11.1111111
 
     def getOffsetuS(self):
         return self.offset
 
-    def setOffset(self,timing=1500,degrees=0.0):
-        if timing != 1500:
-            pass
-        if degrees != 0.0:
-            pass
+    def setOffset(self,timing=None,deg=None):
+        if timing != None:
+            self.offset = timing
+        if deg != None:
+            self.offset = int(float(deg)*11.1111111)
 
     def reset(self):
         self.setPos(timing=1500)
-        self.active = False
         self.move()
 
     def kill(self):
         self.active = False
-        self.move()
+        toSend = "#%dL\r"%(self.servoNum)
+        self.serHandler.sendLock.acquire()
+        self.serHandler.sendQueue.append(toSend)
+        self.serHandler.sendLock.release()
+        if debug: print "sending command #%dL to queue"%self.servoNum
 
     def move(self):
         if self.active:
-            if debug: print "sending command #%dP%dT0 to queue"%(self.servoNum,int(self.servoPos))
+            if debug: print "sending command #%dP%dT0 to queue"%(self.servoNum,int(self.servoPos)+int(self.offset))
             # send the message the serial handler in a thread-safe manner
-            toSend = "#%dP%dT0\r"%(self.servoNum,int(self.servoPos))
+            toSend = "#%dP%dT0\r"%(self.servoNum,int(self.servoPos)+int(self.offset))
             self.serHandler.sendLock.acquire()
             self.serHandler.sendQueue.append(toSend)
             self.serHandler.sendLock.release()
         else:
             try:
-                serMsg = serMsgSend(self.serHandler,"#%dL\r"%self.servoNum)
+                toSend = "#%dL\r"%(self.servoNum,int(self.servoPos))
+                self.serHandler.sendLock.acquire()
+                self.serHandler.sendQueue.append(toSend)
+                self.serHandler.sendLock.release()
                 if debug: print "sending command #%dL to queue"%self.servoNum
             except:
                 pass
@@ -162,6 +186,8 @@ class Controller:
         self.servos = {}
         for i in range(32):
             self.servos[i]=Servo(i,serHandler=self.serialHandler)
+            self.servos[i].kill()
+
         print "servos initalizied"
 
     def killAll(self):
@@ -172,6 +198,6 @@ class Controller:
 
 if __name__ == '__main__':
     pass
-    #conn = Controller()
-    #conn.servos[1].setPos(degrees=30)
+    conn = Controller()
+    #conn.servos[1].setPos(deg=30)
 

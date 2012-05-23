@@ -9,7 +9,7 @@ import os
 import threading
 import ConfigParser
 
-import servitorComm
+import servotorComm
 from robot import hexapod
 import serial
 

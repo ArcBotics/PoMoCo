@@ -12,7 +12,7 @@ import time
 
 from visual import *
 
-from servitorComm import Controller
+from servotorComm import Controller
 controller = Controller()
 con = True
 print "seial controller established"
