@@ -7,7 +7,7 @@ from servotorComm import runMovement
 #smoother means more processing power, and fills the serial line
 #lower if movements start to slow down, or get weird
 #Anything higher than 50 is pointless (maximum refresh of standard servos)
-stepPerS = 50
+stepPerS = 10
 
 # Determines the plane on which all feet will rest
 floor = 60
@@ -16,13 +16,14 @@ class hexapod():
 
     def __init__(self,con):
         self.con = con
-        self.RF = leg(con,'frontRight',0,1,2)
-        self.RM   = leg(con,'midRight',4,5,6)
-        self.RB  = leg(con,'backRight',8,9,10)
+        
+        self.RF  = leg(con,'frontRight',24,25,26)
+        self.RM  = leg(con,'midRight',20,21,22)
+        self.RB  = leg(con,'backRight',16,17,18)
 
-        self.LF  = leg(con,'frontLeft',16,17,18)
-        self.LM    = leg(con,'midLeft',20,21,22)
-        self.LB   = leg(con,'backLeft',24,25,26)
+        self.LF  = leg(con,'frontLeft',7,6,5)
+        self.LM  = leg(con,'midLeft',11,10,9)
+        self.LB  = leg(con,'backLeft',15,14,13)
 
         self.legs = [self.RF,
                      self.RM,

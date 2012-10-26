@@ -102,11 +102,10 @@ class servoGroup:
         #print "servo",self.servoNum,"offset increased to",self.offset
         self.con.servos[self.servoNum].move()
 
-
 class App:
 
     def __init__(self, master):
-        self.con = servitorComm.Controller() # Servo controller
+        self.con = servotorComm.Controller() # Servo controller
         self.hexy = hexapod(self.con)
         self.master = master
 
@@ -122,7 +121,7 @@ class App:
         menu.add_cascade(label="File", menu=filemenu)
         filemenu.add_command(label="New")
         filemenu.add_command(label="Save Offsets", command=self.saveOffsets)
-        # TODO: bring these over from ServitorGui
+        # TODO: bring these over from ServotorGui
         #filemenu.add_command(label="Open Offsets", command=self.openOffsets)
         #filemenu.add_command(label="Save Positions", command=self.savePositions)
         #filemenu.add_command(label="Open Positions", command=self.openPositions)
@@ -161,7 +160,7 @@ class App:
         counter = 0
         for move_name in dir(self):
             if "move_" in move_name:
-                b = Button(self.frame, text=move_name[5:], command = lambda func=getattr(self, "move_"+move_name[5:]): servitorComm.runMovement(func))
+                b = Button(self.frame, text=move_name[5:], command = lambda func=getattr(self, "move_"+move_name[5:]): servotorComm.runMovement(func))
                 b.grid(row=counter+8, column=0)
                 #b.pack()
                 counter += 1
@@ -213,7 +212,7 @@ class App:
         self.servos.append(servoGroup(self.frame,self.con,servoNum,colX=coords[0],rowY=coords[1]))
 
     def gui_estop(self):
-        servitorComm.runMovement(self.estop)
+        servotorComm.runMovement(self.estop)
 
     def loadOffsets(self):
         # If there is one offset file in the folder, automatically load it
@@ -248,13 +247,13 @@ class App:
     def move_reset(self):
         deg = -30
         #put all the feet centered and on the floor.
-        self.hexy.RF.replantFoot(-deg,stepTime=0.3)
+        self.hexy.RF.replantFoot(deg,stepTime=0.3)
         self.hexy.LM.replantFoot(1,stepTime=0.3)
-        self.hexy.RB.replantFoot(deg,stepTime=0.3)
+        self.hexy.RB.replantFoot(-deg,stepTime=0.3)
         time.sleep(0.5)
-        self.hexy.LF.replantFoot(deg,stepTime=0.3)
+        self.hexy.LF.replantFoot(-deg,stepTime=0.3)
         self.hexy.RM.replantFoot(1,stepTime=0.3)
-        self.hexy.LB.replantFoot(-deg,stepTime=0.3)
+        self.hexy.LB.replantFoot(deg,stepTime=0.3)
         time.sleep(0.5)
 
     def move_rotateLeft(self):
@@ -299,7 +298,7 @@ class App:
 
         #re-plant tripod1 deg degrees forward
         for leg in self.hexy.tripod1:
-            leg.replantFoot(deg,stepTime=0.4)
+            leg.replantFoot(deg,stepTime=0.2)
         time.sleep(0.5)
 
         #raise tripod2 feet in place as tripod1 rotate and neck
@@ -326,9 +325,9 @@ class App:
         time.sleep(0.3)
 
     def move_moveForward(self):
-        deg = -25
+        deg = 25
         midFloor = 30
-        hipSwing = -25
+        hipSwing = 25
         pause = 0.5
 
         #tripod1 = RF,LM,RB
@@ -364,7 +363,7 @@ class App:
         print "moving backward"
         deg = -25
         midFloor = 30
-        hipSwing = -25
+        hipSwing = 25
         pause = 0.5
 
         #tripod1 = RF,LM,RB
@@ -576,6 +575,16 @@ class App:
         self.move_tiltReset()
         time.sleep(0.2)
 
+    def move_bellyFlop(self):
+        self.move_setZero()
+        time.sleep(2)
+        self.move_tiltRight()
+        self.move_tiltLeft()
+        time.sleep(0.3)
+        self.move_tiltReset()
+        time.sleep(0.5)
+        self.move_reset()
+
     def move_danceCircle(self):
         self.move_tiltLeft()
         time.sleep(0.2)
@@ -588,19 +597,17 @@ class App:
         self.move_tiltRight()
         time.sleep(0.2)
 
-
-
     def move_wave(self):
-        self.hexy.neck.set(-30)
+        self.hexy.neck.set(0)
 
-        self.hexy.LF.hip(40)
+        self.hexy.LF.hip(-20)
         self.hexy.LF.knee(0)
         self.hexy.LF.ankle(0)
 
         time.sleep(0.2)
 
         for i in range(3):
-            self.hexy.LF.hip(20)
+            self.hexy.LF.hip(-20)
             self.hexy.LF.knee(-50)
             self.hexy.LF.ankle(-20)
 
@@ -609,6 +616,8 @@ class App:
             self.hexy.LF.knee(-10)
             self.hexy.LF.ankle(0)
             time.sleep(0.2)
+
+        self.hexy.LF.knee(-40)
 
     def move_typing(self):
         self.move_leanBack()
