@@ -7,7 +7,7 @@ from servotorComm import runMovement
 #smoother means more processing power, and fills the serial line
 #lower if movements start to slow down, or get weird
 #Anything higher than 50 is pointless (maximum refresh of standard servos)
-stepPerS = 10
+stepPerS = 20
 
 # Determines the plane on which all feet will rest
 floor = 60
