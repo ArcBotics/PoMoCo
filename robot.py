@@ -17,13 +17,13 @@ class hexapod():
     def __init__(self,con):
         self.con = con
         
-        self.RF  = leg(con,'frontRight',24,25,26)
-        self.RM  = leg(con,'midRight',20,21,22)
-        self.RB  = leg(con,'backRight',16,17,18)
+        self.RF  = leg(con,'rightFront',24,25,26)
+        self.RM  = leg(con,'rightMid',20,21,22)
+        self.RB  = leg(con,'rightBack',16,17,18)
 
-        self.LF  = leg(con,'frontLeft',7,6,5)
-        self.LM  = leg(con,'midLeft',11,10,9)
-        self.LB  = leg(con,'backLeft',15,14,13)
+        self.LF  = leg(con,'leftFront',7,6,5)
+        self.LM  = leg(con,'leftMid',11,10,9)
+        self.LB  = leg(con,'leftBack',15,14,13)
 
         self.legs = [self.RF,
                      self.RM,

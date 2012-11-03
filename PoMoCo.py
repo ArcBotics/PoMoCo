@@ -121,7 +121,7 @@ class App:
         menu.add_cascade(label="File", menu=filemenu)
         filemenu.add_command(label="New")
         filemenu.add_command(label="Save Offsets", command=self.saveOffsets)
-        # TODO: bring these over from ServotorGui
+        # TODO: bring these over from servitorGui
         #filemenu.add_command(label="Open Offsets", command=self.openOffsets)
         #filemenu.add_command(label="Save Positions", command=self.savePositions)
         #filemenu.add_command(label="Open Positions", command=self.openPositions)
