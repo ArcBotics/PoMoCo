@@ -60,6 +60,7 @@ class serHandler(threading.Thread):
                             self.ser.write(str(toSend))
                             sendTime = time.clock()-startTime
                             serialSends.append([float(sendTime),str(toSend)])
+                            time.sleep(0.003)
                         if debug:
                             print "sent '%s' to COM%d"%(str(toSend).strip('\r'),self.serNum+1)
 
