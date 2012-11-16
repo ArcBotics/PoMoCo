@@ -43,26 +43,26 @@ class serHandler(threading.Thread):
 
     def run(self):
         self.connect()
-        if self.serOpen:
-            if self.ser.writable:
+        while(True):
+        # send waiting messages
+            send = False
+            if(len(self.sendQueue)>0):
+                self.sendLock.acquire()
+                toSend = self.sendQueue.pop(0)
+                self.sendLock.release()
+                send = True
+            else:
+                time.sleep(0.01) # keeps infinite while loop from killing processor
+            if send:
+                sendTime = time.clock()-startTime
+                serialSends.append([float(sendTime),str(toSend)])
+                time.sleep(0.001)
                 if self.serOpen:
-                    while(True):
-                    # send waiting messages
-                        send = False
-                        if(len(self.sendQueue)>0):
-                            self.sendLock.acquire()
-                            toSend = self.sendQueue.pop(0)
-                            self.sendLock.release()
-                            send = True
-                        else:
-                            time.sleep(0.01) # keeps infinite while loop from killing processor
-                        if send:
+                    if self.ser.writable:
+                        if self.serOpen:
                             self.ser.write(str(toSend))
-                            sendTime = time.clock()-startTime
-                            serialSends.append([float(sendTime),str(toSend)])
-                            time.sleep(0.003)
-                        if debug:
-                            print "sent '%s' to COM%d"%(str(toSend).strip('\r'),self.serNum+1)
+            if debug:
+                print "sent '%s' to COM%d"%(str(toSend).strip('\r'),self.serNum+1)
 
             # retreive waiting responses
             #  don't need reading yet, holding off on fully implementing it till needed
