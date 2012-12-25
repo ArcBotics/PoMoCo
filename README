@@ -1,0 +1,26 @@
+PoMoCo 0.9 to 1.0 Changes:
+1.) All moves now run out of the Moves folder. 
+
+Each move is a separate file that automatically imports all the necessary libraries. On startup, PoMoCo automatically recognizes the files in the move folders, and creates buttons for each of them. The moves are dynamically loaded when its button is pressed, meaning you don't even need to restart PoMoCo when you modify the move!
+
+In Short, the process for creating a move is now:
+1.) Create a .py File in [PoMoCo main folder]/Moves/
+2.) Write moves as detailed in the documentation
+3.) Open PoMoCo
+4.) Click the button matching the file name to run the move
+5.) Update the move in the text editor, click the button again, and the updated move runs without restarted the program
+
+2.) Frame rate fix 
+Changed from 50 FPS to 10FPS. This was causing a lot of slowdowns and hangups on OSX. This change has been confirmed on multiple OSX machines to solve hangups.
+
+3.) Changing file locations
+All support files that aren't PoMoCo.py are now moved to [PoMoCo Main Folder]/PoMoCo/ to clean up the look of the software
+
+4.) Baud Rate Change
+Slowed down the Baud rate on the serial connection from 115200 to 9600 to correspond with the 1.7 Firmware Update
+
+5.) Move Rate Change
+Changed the number of servo updates per move per second from 40 to 5. This dramatically decreases the time it takes per move, especially with moves like walking
+
+6.) Move Cleanup
+We had a lot of moves in there we wrote either for trade shows or videos, or were still unfinished (like walking lean back). We fixed each move up, and they're now all ready to go. We even added a couple (like Get Up).
