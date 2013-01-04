@@ -36,6 +36,7 @@ class App:
 
         filemenu.add_separator()
         filemenu.add_command(label="Exit", command=self.quitApp)
+        master.createcommand('exit', self.quitApp)  
 
         #setup kill button
         self.killButton = Button(self.frame, text="Kill All Servos",fg="red",
