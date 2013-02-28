@@ -15,7 +15,7 @@ if __name__ == '__main__':
     controller = servotorComm.Controller() # Servo controller
 
     hexy = hexapod(controller)
-    __builtins__.hexy = hexy # sets 'hexy' to be a gobal variable common to all modules
+    __builtins__.hexy = hexy # sets 'hexy' to be a global variable common to all modules
     __builtins__.floor = 60  # this is the minimum level the legs will reach
 
     # go through the Moves folder to find move files
@@ -29,7 +29,7 @@ if __name__ == '__main__':
 
     # global function for running move files
     def move(moveName):
-        print "Preforming move:",moveName
+        print "Performing move:",moveName
         moveName = moveName.replace(' ','')
         if moveName in sys.modules:
             reload(sys.modules[moveName])
