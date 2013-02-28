@@ -46,7 +46,7 @@ class serHandler(threading.Thread):
     def run(self):
         self.connect()
         while(True):
-        # send waiting messages
+            # Send waiting messages
             send = False
             if(len(self.sendQueue)>0):
                 self.sendLock.acquire()
@@ -54,7 +54,7 @@ class serHandler(threading.Thread):
                 self.sendLock.release()
                 send = True
             else:
-                time.sleep(0.01) # keeps infinite while loop from killing processor
+                time.sleep(0.01) # Keeps infinite while loop from killing processor
             if send:
                 sendTime = time.clock()-startTime
                 serialSends.append([float(sendTime),str(toSend)])
@@ -63,12 +63,12 @@ class serHandler(threading.Thread):
                     if self.ser.writable:
                         if self.serOpen:
                             self.ser.write(str(toSend))
-                            print "sent '%s' to COM%d"%(str(toSend).strip('\r'),self.serNum+1)
+                            print "Sent '%s' to COM%d"%(str(toSend).strip('\r'),self.serNum+1)
             if debug:
-                print "sent '%s' to COM%d"%(str(toSend).strip('\r'),self.serNum+1)
+                print "Sent '%s' to COM%d"%(str(toSend).strip('\r'),self.serNum+1)
 
-            # retreive waiting responses
-            #  don't need reading yet, holding off on fully implementing it till needed
+            # Retrieve waiting responses
+            # TODO: Don't need reading yet, holding off on fully implementing it till needed.
             """
             if self.ser.readable():
                 read = self.ser.read()
@@ -142,7 +142,7 @@ class Servo:
         self.active = active
         self.servoNum = servoNum
 
-        #servo position and offset is stored in microseconds (uS)
+        # Servo position and offset is stored in microseconds (uS)
         self.servoPos = servoPos
         self.offset = offset
 
@@ -155,8 +155,8 @@ class Servo:
         if move:
             self.active = True
             self.move()
-            if debug: print "moved ",self.servoNum
-        if debug: print "servo",self.servoNum,"set to",self.servoPos
+            if debug: print "Moved ",self.servoNum
+        if debug: print "Servo",self.servoNum,"set to",self.servoPos
 
     def getPosDeg(self):
         return (self.servoPos-1500)/11.1111111
@@ -189,21 +189,21 @@ class Servo:
         self.serHandler.sendLock.acquire()
         self.serHandler.sendQueue.append(toSend)
         self.serHandler.sendLock.release()
-        if debug: print "sending command #%dL to queue"%self.servoNum
+        if debug: print "Sending command #%dL to queue"%self.servoNum
 
     def move(self):
         if self.active:
             servoPos = self.servoPos+self.offset
-            # auto-correct the output to bound within 500uS to 2500uS signals, the limits of the servos
+            # Auto-correct the output to bound within 500uS to 2500uS signals, the limits of the servos
             if servoPos < 500:
                 servoPos = 500
             if servoPos > 2500:
                 servoPos = 2500
                 
-            # debug message if needed
-            if debug: print "sending command #%dP%dT0 to queue"%(self.servoNum,int(servoPos))
+            # Debug message if needed
+            if debug: print "Sending command #%dP%dT0 to queue"%(self.servoNum,int(servoPos))
 
-            # send the message the serial handler in a thread-safe manner
+            # Send the message the serial handler in a thread-safe manner
             toSend = "#%dP%.4dT0\r"%(self.servoNum,int(servoPos))
             self.serHandler.sendLock.acquire()
             self.serHandler.sendQueue.append(toSend)
@@ -214,7 +214,7 @@ class Servo:
                 self.serHandler.sendLock.acquire()
                 self.serHandler.sendQueue.append(toSend)
                 self.serHandler.sendLock.release()
-                if debug: print "sending command #%dL to queue"%self.servoNum
+                if debug: print "Sending command #%dL to queue"%self.servoNum
             except:
                 pass
 
@@ -226,13 +226,13 @@ class Controller:
             time.sleep(0.01)
         if self.serialHandler.serOpen == False:
             print "Connection to Servotor failed. No robot movement will occur."
-        print "initilizing servos"
+        print "Initializing servos."
         self.servos = {}
         for i in range(32):
             self.servos[i]=Servo(i,serHandler=self.serialHandler)
             self.servos[i].kill()
 
-        print "servos initalizied"
+        print "Servos initialized."
 
     def __del__(self):
         del self.serialHandler
@@ -241,7 +241,7 @@ class Controller:
         if self.serialHandler.serOpen:
             for servo in self.servos:
                 self.servos[servo].kill()
-        print "Killing all servos"
+        print "Killing all servos."
 
 if __name__ == '__main__':
     pass

@@ -3,10 +3,10 @@ import math
 
 from servotorComm import runMovement
 
-#modifies how smoothly the servos move
-#smoother means more processing power, and fills the serial line
-#lower if movements start to slow down, or get weird
-#Anything higher than 50 is pointless (maximum refresh of standard servos)
+# Modifies how smoothly the servos move.
+# Smoother means more processing power, and fills the serial line.
+# Lower if movements start to slow down, or get weird.
+# Anything higher than 50 is pointless ( faster than the maximum refresh of standard servos ).
 stepPerS = 5
 
 class hexapod():
@@ -84,7 +84,7 @@ class leg():
 
         steps = range(int(stepPerS))
         for i,t in enumerate(steps):
-            # TODO: implement time-movements the servo commands sent for far fewer
+            # TODO: Implement time-movements the servo commands sent for far fewer
             #       total servo commands
             hipAngle = (hipMaxDiff/len(steps))*(i+1)
             try:
@@ -98,8 +98,8 @@ class leg():
             time.sleep(stepTime/float(stepPerS))
 
     def setFootY_function(self,footY,stepTime):
-        # TODO: max steptime dependent
-        # TODO: implement time-movements the servo commands sent for far fewer
+        # TODO: Max step-time dependent
+        # TODO: Implement time-movements the servo commands sent for far fewer
         #       total servo commands
 
         if (footY < 75) and (footY > -75):
@@ -122,28 +122,28 @@ class leg():
         for i,t in enumerate(steps):
 
             hipAngle = (hipMaxDiff/len(steps))*(i+1)
-            #print "hip angle calc'd:",hipAngle
+            #print "hip angle calculated:",hipAngle
 
-            #calculate the absolute distance between the foot's highest and lowest point
+            # Calculate the absolute distance between the foot's highest and lowest point
             footMax = 0
             footMin = floor
             footRange = abs(footMax-footMin)
 
-            #normalize the range of the hip movement to 180 deg
+            # Normalize the range of the hip movement to 180 deg
             try:
                 anglNorm=hipAngle*(180/(hipMaxDiff))
             except:
                 anglNorm=hipAngle*(180/(1))
             #print "normalized angle:",anglNorm
 
-            #base footfall on a sin pattern from footfall to footfall with 0 as the midpoint
+            # Base footfall on a sin pattern from footfall to footfall with 0 as the midpoint
             footY = footMin-math.sin(math.radians(anglNorm))*footRange
             #print "calculated footY",footY
 
-            #set foot height
+            # Set foot height
             self.setFootY(footY,stepTime=0)
             hipAngle = currentHipAngle+hipAngle
             self.con.servos[self.hipServoNum].setPos(deg=hipAngle)
 
-            #wait for next cycle
+            # Wait for next cycle
             time.sleep(stepTime/float(stepPerS))

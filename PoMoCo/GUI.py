@@ -20,7 +20,7 @@ class App:
 
         self.frame.pack()
 
-        #setup menu system
+        # Setup menu system
         menu = Menu(root)
         root.config(menu=menu)
         filemenu = Menu(menu)
@@ -29,7 +29,7 @@ class App:
         filemenu.add_command(label="New")
         filemenu.add_command(label="Save Offsets", command=self.saveOffsets)
         
-        # TODO: bring these over from servitorGui
+        # TODO: Bring these over from servitorGui
         #filemenu.add_command(label="Open Offsets", command=self.openOffsets)
         #filemenu.add_command(label="Save Positions", command=self.savePositions)
         #filemenu.add_command(label="Open Positions", command=self.openPositions)
@@ -38,7 +38,7 @@ class App:
         filemenu.add_command(label="Exit", command=self.quitApp)
         master.createcommand('exit', self.quitApp)  
 
-        #setup kill button
+        # Setup kill button
         self.killButton = Button(self.frame, text="Kill All Servos",fg="red",
                                 font=("Helvetica", 20),command=self.estop)
         self.killButton.grid(row=0,column=14)
@@ -46,7 +46,7 @@ class App:
         self.loadOffsets()
 
         self.servos = []
-        #setup left side, 4 groups of 4 servo controls
+        # Setup left side, 4 groups of 4 servo controls
         for i in xrange(4):
             self.newServo(0+i*4,[1,8+i*5])
             self.newServo(1+i*4,[1,9+i*5])
@@ -54,7 +54,7 @@ class App:
             self.newServo(3+i*4,[1,11+i*5])
             self.addSpace([0,12+i*5])
 
-        #setup right side, 4 groups of 4 servo controls
+        # Setup right side, 4 groups of 4 servo controls
         for i in xrange(4):
             self.newServo(16+i*4,[11,8+i*5])
             self.newServo(17+i*4,[11,9+i*5])
@@ -62,10 +62,10 @@ class App:
             self.newServo(19+i*4,[11,11+i*5])
             self.addSpace([11,12+i*5])
 
-        #add some spaces for asthetics
+        # Add some spaces for aesthetics
         self.addSpace([10,1])
 
-        # generate buttons for all move functions
+        # Generate buttons for all move functions
         counter = 0
         for move_name in moves:
             b = Button(self.frame, text=move_name)
@@ -92,7 +92,7 @@ class App:
         root.quit()
 
     def poll(self):
-        # Constantly updates the gui based on the current status of the controller
+        # Constantly updates the GUI based on the current status of the controller
 
         for servo in self.con.servos:
             pos = self.con.servos[servo].getPosuS()
@@ -126,7 +126,7 @@ class App:
                 off_files.append(filename)
 
         if len(off_files) == 1:
-            print "opening",off_files[0]
+            print "Opening",off_files[0]
             config = ConfigParser.ConfigParser()
             config.read(off_files[0])
 
@@ -140,9 +140,9 @@ class App:
                             #print "set servo",servoNum,"offset as",offset
                             self.con.servos[servo].setOffset(timing=offset)
                             break
-                print "automatically loaded offsets from",off_files[0]
+                print "Automatically loaded offsets from",off_files[0]
             except:
-                print "automatic offset load failed, is there an offset file in the program directory?"
+                print "Automatic offset load failed, is there an offset file in the program directory?"
 
     def estop(self):
         self.con.killAll()
